@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option csharp_namespace = "gRPCFullDuplex.Shared";
+
+
+package eratosthenesSieve;
+
+// The EratosthenesSieve service definition.
+service EratosthenesSieveProto {
+  // Sends a call with streaming
+  rpc Call (stream SieveRequest) returns (stream SieveReply);
+}
+
+// The request message containing first sieve setting, next prime numbers.
+message SieveRequest {  
+	oneof result {
+		int32 prime = 1;  
+		Sieve sieve = 2;
+	}
+}
+message Sieve {
+	int32 start = 1;
+	int32 range = 2;
+}
+
+// The response message containing the index, numbers and isPrime value.
+message SieveReply {
+  int32 value = 1;
+  int32 index = 2;
+  bool isPrime = 3;
+}

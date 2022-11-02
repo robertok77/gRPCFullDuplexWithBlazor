@@ -1,0 +1,79 @@
+﻿@page "/"
+
+
+<PageTitle>Full duplex gRPC demo</PageTitle>
+
+<h3>Full duplex gRPC demo.</h3>
+<h4><span style="color: blue">Web Blazor Client</span>&#8660;<span style="color: blueviolet">Server</span></h4>
+<h6>
+    This demo demonstrates full duplex gRPC streaming data in parallel. Generated prime numbers from client sieve are streaming to server sieve.
+    In parallel, server sieve is calculated and data are streaming to client ui. You can see both working streams on the page.
+</h6>
+<p> </p>
+
+@if (ViewModel.SieveWebList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="border p-3">
+        <div class="input-group mb-3 ">
+            <span class="input-group-text " id="label-range1">Range of eratosthenes sieve</span>
+            <span class="input-group-text " id="label-range2">2 - @ViewModel.Range</span>
+            <input type="range" class="form-range  col-2 align-self-center" disabled="@ViewModel.IsDisabled"
+               @bind-value="@ViewModel.Range" @bind-value:event="oninput"
+               step="100" min="10" max="@ViewModel.MaxRange"
+               aria-label="primes range" aria-describedby="primes range">
+            <div class="input-group-append col-6 mt-3">
+                <button class="btn btn-primary" type="button" disabled="@ViewModel.IsDisabled" id="button-addon2" @onclick="ViewModel.Start">Search primes</button>
+                <button class="btn btn-secondary" type="button" disabled="@(ViewModel.IsDisabled == false)" id="button-addon3" @onclick="ViewModel.Cancel">Cancel</button>
+                @if (!string.IsNullOrWhiteSpace(ViewModel.NotificationService.ErrorMessage))
+                {
+                    <div for="errorMessage" class="form-label" style="color: red">@ViewModel.NotificationService.ErrorMessage</div>
+                }
+            </div>
+        </div>
+
+        <div class="input-group mb-3">
+            <div for="delayRange" class="form-label">Adjust speed</div>
+            <input type="range" class="form-range" id="delayRange"
+               step="1" min="50" max="@ViewModel.MaxDelay"
+               @bind-value="@ViewModel.Speed" @bind-value:event="oninput" />
+        </div>
+
+        <p><b>Final Result</b></p>
+        <div class="d-flex p-2 bd-highlight">
+            <div class="d-flex flex-wrap ">
+                @foreach (var prime in ViewModel.Primes.ToArray().OrderBy(x => x.Key))
+                {
+                    var color = prime.Value == Kind.Client ? "blue" : "blueviolet";
+                    <b class="p-2 " style=color:@color>@prime.Key</b>
+                }
+            </div>
+        </div>
+        <hr />
+        <p>Web Blazor Client</p>
+        <div class="d-flex p-2 bd-highlight">
+            <div class="d-flex flex-wrap">
+                @foreach (var prime in ViewModel.SieveWebList)
+                {
+                    var color = prime.IsHidden ? "lightgray" : "blue";
+                    <div class="p-2 bd-highlight" style=color:@color>@prime.Value</div>
+                }
+            </div>
+        </div>
+        <p>Server</p>
+        <div class="d-flex p-2 bd-highlight">
+            <div class="d-flex flex-wrap">
+                @foreach (var prime in ViewModel.SieveServerList)
+                {
+                    var color = prime.IsHidden ? "lightgray" : "blueviolet";
+                    <div class="p-2 bd-highlight" style=color:@color>@prime.Value</div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+

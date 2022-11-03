@@ -17,5 +17,5 @@
  - Fluent Assertion
  - BUnit.Web
  - Test Server
- - Moq, XUnit
+ - Moq, xUnit
  
